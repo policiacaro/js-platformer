@@ -3,14 +3,75 @@
   <head>
     <meta charset="utf-8" />
     <style>
-
-    </style>
+      canvas { background-color: aquamarine;}
+     </style>
   </head>
   <body>
+    <canvas id="myCanvas" width="720" height="360"></canvas>
     <script>
       let imgChar = new Image();
-      imgChar.src = "images/characters.png";
-      document.body.appendChild(imgChar);
+      const canvas = document.getElementById( "myCanvas" );
+      const ctx = canvas.getContext( "2d" );
+      let leftPressed = false;
+      let rightPressed = false;
+      let spacePressed = false;
+      let charH = 0;
+      let charV = 300;
+      let charSizeH = 32;
+      let charSizeV = 40;
+
+
+      function keyUpHandler( e ) {
+        if ( e.key == "Right" || e.key == "ArrowRight" ) {
+          rightPressed = false;
+        } else if ( e.key == "Left" || e.key == "ArrowLeft" ) {
+          leftPressed = false;
+        }
+      }
+
+      function keyDownHandler( e ) {
+        if ( e.key == "Right" || e.key == "ArrowRight" ) {
+          rightPressed = true;
+        } else if ( e.key == "Left" || e.key == "ArrowLeft" ) {
+          leftPressed = true;
+        }
+      }
+
+      imgChar.onload = function() {
+        Promise.all([
+          createImageBitmap( imgChar, 3, 1, 18, 20 )
+        ]).then( function( sprites ) {
+
+          function drawChar() {
+            ctx.drawImage( sprites[0], charH, charV, charSizeH, charSizeV );
+          }
+
+          function draw() {
+            ctx.clearRect( 0, 0, canvas.width, canvas.height );
+
+            drawChar();
+
+            if ( leftPressed == true ) {
+              charH -= 10;
+              if ( charH < 0 ) {
+                charH = 0;
+              }
+            } else if ( rightPressed == true ) {
+              charH += 10;
+              if ( charH > ( canvas.width - charSizeH )) {
+                charH = ( canvas.width - charSizeH ); // characters max left edge is 6 pixels away from canvas edge
+              }
+            }
+
+            requestAnimationFrame( draw );
+          }
+          draw();
+        });
+      }
+
+      document.addEventListener( "keydown", keyDownHandler, false );
+      document.addEventListener( "keyup", keyUpHandler, false );
+      imgChar.src = "images/charactersCropped.png";
     </script>
   </body>
  </html>

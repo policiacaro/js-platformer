@@ -1,18 +1,21 @@
- <!DOCTYPE html>
- <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset=UTF-8>
     <title>JS-Platformer</title>
     <style>
-      canvas { background-color: aquamarine;}
-     </style>
+      canvas { background-color: aquamarine; }
+    </style>
   </head>
   <body>
     <canvas id="myCanvas" width="720" height="360"></canvas>
+    <canvas id="testCanvas" width="32" height="40"></canvas>
     <script>
       let imgChar = new Image();
       const canvas = document.getElementById( "myCanvas" );
+      const canvasTest = document.getElementById( "testCanvas" );
       const ctx = canvas.getContext( "2d" );
+      const ctxt = canvasTest.getContext( "2d" );
       let leftPressed = false;
       let rightPressed = false;
       let spacePressed = false;
@@ -21,12 +24,16 @@
       let charSizeH = 32;
       let charSizeV = 40;
 
+      ctx.imageSmoothingEnabled = false;
+      ctxt.imageSmoothingEnabled = false;
 
       function keyUpHandler( e ) {
         if ( e.key == "Right" || e.key == "ArrowRight" ) {
           rightPressed = false;
         } else if ( e.key == "Left" || e.key == "ArrowLeft" ) {
           leftPressed = false;
+        } else if( e.key == " " || e.key == "Spacebar" ) {
+          spacePressed = false;
         }
       }
 
@@ -35,22 +42,36 @@
           rightPressed = true;
         } else if ( e.key == "Left" || e.key == "ArrowLeft" ) {
           leftPressed = true;
+        } else if ( e.key == " " || e.key == "Spacebar" ) {
+          spacePressed = true;
         }
       }
 
       imgChar.onload = function() {
         Promise.all([
-          createImageBitmap( imgChar, 3, 1, 18, 20 )
+          createImageBitmap( imgChar, 3, 1, 18, 20 ), //character left edge starts at 3, top edge at 1, and is 16 px wide, 20px tall
+          createImageBitmap( imgChar, 704, 119, 15, 20 )
         ]).then( function( sprites ) {
 
           function drawChar() {
             ctx.drawImage( sprites[0], charH, charV, charSizeH, charSizeV );
           }
 
+          function drawRChar() {
+            ctx.drawImage( sprites[1], charH, charV, charSizeH-5, charSizeV );
+          }
+
           function draw() {
             ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
-            drawChar();
+            ctxt.drawImage( sprites[0], 0, 0 );
+            ctxt.drawImage( sprites[1], 0, 20 );
+
+            if ( leftPressed == true ) {
+              drawRChar();
+            } else {
+              drawChar();
+            }
 
             if ( leftPressed == true ) {
               charH -= 10;
@@ -64,6 +85,7 @@
               }
             }
 
+
             requestAnimationFrame( draw );
           }
           draw();
@@ -72,7 +94,7 @@
 
       document.addEventListener( "keydown", keyDownHandler, false );
       document.addEventListener( "keyup", keyUpHandler, false );
-      imgChar.src = "images/charactersCropped.png";
+      imgChar.src = "images/charactersCroppedFlipped.png"; //sprite sheet is 722px wide, 250px tall
     </script>
   </body>
- </html>
+</html>

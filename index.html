@@ -4,12 +4,15 @@
     <meta charset=UTF-8>
     <title>JS-Platformer</title>
     <style>
-      canvas { background-color: aquamarine; }
+      canvas {
+        background-color: aquamarine;
+        image-rendering: pixelated;
+      }
     </style>
   </head>
   <body>
-    <canvas id="myCanvas" width="720" height="360"></canvas>
-    <canvas id="testCanvas" width="32" height="42"></canvas>
+    <canvas id="myCanvas" width="680" height="420"></canvas>
+    <canvas id="testCanvas" width="34" height="42"></canvas>
     <script>
       let imgChar = new Image();
       const canvas = document.getElementById( "myCanvas" );
@@ -21,8 +24,8 @@
       let spacePressed = false;
       let charH = 0.0;
       let charV = 300.0;
-      let charSizeH = 30;
-      let charSizeV = 40;
+      let charSizeH = 34;
+      let charSizeV = 42;
       let lastPressed = 0;
       let onGround = true;
       let ground = 0;
@@ -30,7 +33,7 @@
       let doubleJump = false;
       let jumpCounter = 0;
       let walkFrames = 0;
-      let walkFrameCount = 0;
+      let walkFrameCount = 0.0;
       let frameCounter = 0;
 
       ctx.imageSmoothingEnabled = false;
@@ -84,39 +87,63 @@
       }
 
       function keyDownHandler( e ) {
-        Date.now();
+        //Date.now();
         if ( e.key == "Right" || e.key == "ArrowRight" ) {
+          if ( walkFrameCount > 2 ) walkFrameCount = 0;
+          walkFrameCount++;
           rightPressed = true;
+          if ( walkFrameCount === 2 ) walkFrames++;
         } else if ( e.key == "Left" || e.key == "ArrowLeft" ) {
+          if ( walkFrameCount > 2 ) walkFrameCount = 0;
+          walkFrameCount++;
           leftPressed = true;
-        } else if ( e.key == " " || e.key == "Spacebar" ) {
+          if ( walkFrameCount === 2 ) walkFrames++;
+        }
+        if ( e.key == " " || e.key == "Spacebar" ) {
           spacePressed = true;
         }
       }
 
       imgChar.onload = function() {
         Promise.all([
-          createImageBitmap( imgChar, 3, 0, 15, 21 ), //character left edge starts at 3, top edge at 1, and is 16 px wide, 20px tall
-          createImageBitmap( imgChar, 35, 0, 15, 21 ),
-          createImageBitmap( imgChar, 66, 0, 15, 21 ),
-          createImageBitmap( imgChar, 98, 0, 15, 21 ),
-          createImageBitmap( imgChar, 704, 118, 15, 21 )
+          createImageBitmap( imgChar, 3, 0, 17, 21 ), //walk 0, character first frame facing right, first row
+          createImageBitmap( imgChar, 35, 0, 17, 21 ), //walk 1
+          createImageBitmap( imgChar, 66, 0, 17, 21 ), //walk 2
+          createImageBitmap( imgChar, 98, 0, 17, 21 ), //walk 3
+          createImageBitmap( imgChar, 704, 118, 17, 21 ), //walk 4, character first frame facing left, fifth row
+          createImageBitmap( imgChar, 672, 118, 17, 21 ), //walk 5
+          createImageBitmap( imgChar, 639, 118, 17, 21 ), //walk 6
+          createImageBitmap( imgChar, 607, 118, 17, 21 ) //walk 7
         ]).then( function( sprites ) {
           /*
           walkFrames is used as a counter for frame rate; used to decide when to switch to next frame in animation
           sprites[0] is the right facing frame, also beginning of walk animation, etc walk frame 0 = sprites[0], walk frame 1 = sprites[1]
           */
           function drawChar() {
-            walkFrameCount = walkFrames % 4; //hyper fucko speed
-            if ( walkFrames > 0 ) {
-              ctx.drawImage( sprites[walkFrameCount], charH, charV, charSizeH, charSizeV );
+            /*
+            if ( walkFrameCount === 10 ) {
+              if ( walkFrames > 3 ) walkFrames = 0;
+              walkFrames++;
+              console.log(`adding to walk frame`);
+            }
+            */
+            if ( walkFrames > 3 ) walkFrames = 0;
+            ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
+            //console.log(walkFrames);
+            /*
+            if ( walkFrameCount >= 0 ) {
+              ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
             } else {
               ctx.drawImage( sprites[0], charH, charV, charSizeH, charSizeV );
             }
+            */
           }
 
           function drawRChar() {
-            ctx.drawImage( sprites[ sprites.length - 1 ], charH, charV, charSizeH, charSizeV );
+            if ( walkFrames < 4 || walkFrames > 7) walkFrames = 4;
+
+
+            ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
           }
 
           function groundCheck() {
@@ -124,12 +151,12 @@
           }
 
           function draw() {
-            let startTimer = Date.now();
+            // let startTimer = Date.now();
             ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
-            ctxt.drawImage( sprites[0], 0, 0 );
-            ctxt.drawImage( sprites[1], 0, 21 );
-            ctxt.drawImage( sprites[1], 16, 0 );
+            ctxt.drawImage( sprites[4], 0, 0 );
+            ctxt.drawImage( sprites[7], 0, 21 );
+            ctxt.drawImage( sprites[7], 17, 0 );
 
             jump();
 
@@ -146,13 +173,13 @@
 
             if ( leftPressed == true ) {
               lastPressed = 1;
-              charH -= 5;
+              charH -= 2;
               if ( charH < 0 ) {
                 charH = 0;
               }
             } else if ( rightPressed == true ) {
               lastPressed = 0;
-              charH += 5;
+              charH += 2;
               if ( charH > ( canvas.width - charSizeH )) {
                 charH = ( canvas.width - charSizeH ); // characters max left edge is 6 pixels away from canvas edge
               }
@@ -162,8 +189,8 @@
               startJump = true;
               jump();
             }
-            //walkFrames++;
-            console.log(`walk frames ${walkFrames}; modulo operation walk frames counter ${walkFrameCount}`);
+            //walkFramesCount++;
+            //console.log(`walk frames ${walkFrames}; modulo operation walk frames counter ${walkFrameCount}`);
             requestAnimationFrame( draw );
           }
           draw();

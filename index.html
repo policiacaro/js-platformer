@@ -107,7 +107,7 @@
           sprites[0] is the right facing frame, also beginning of walk animation, etc walk frame 0 = sprites[0], walk frame 1 = sprites[1]
           */
           function drawChar() {
-            //walkFrameCount = walkFrames % 4; hyper fucko speed
+            walkFrameCount = walkFrames % 4; //hyper fucko speed
             if ( walkFrames > 0 ) {
               ctx.drawImage( sprites[walkFrameCount], charH, charV, charSizeH, charSizeV );
             } else {

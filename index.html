@@ -4,12 +4,15 @@
     <meta charset=UTF-8>
     <title>JS-Platformer</title>
     <style>
-      canvas { background-color: aquamarine; }
+      canvas {
+        background-color: aquamarine;
+        image-rendering: pixelated;
+      }
     </style>
   </head>
   <body>
-    <canvas id="myCanvas" width="720" height="360"></canvas>
-    <canvas id="testCanvas" width="32" height="42"></canvas>
+    <canvas id="myCanvas" width="680" height="420"></canvas>
+    <canvas id="testCanvas" width="34" height="42"></canvas>
     <script>
       let imgChar = new Image();
       const canvas = document.getElementById( "myCanvas" );
@@ -21,8 +24,8 @@
       let spacePressed = false;
       let charH = 0.0;
       let charV = 300.0;
-      let charSizeH = 30;
-      let charSizeV = 40;
+      let charSizeH = 34;
+      let charSizeV = 42;
       let lastPressed = 0;
       let onGround = true;
       let ground = 0;
@@ -95,20 +98,22 @@
           walkFrameCount++;
           leftPressed = true;
           if ( walkFrameCount === 2 ) walkFrames++;
-        } else if ( e.key == " " || e.key == "Spacebar" ) {
+        }
+        if ( e.key == " " || e.key == "Spacebar" ) {
           spacePressed = true;
         }
       }
 
       imgChar.onload = function() {
         Promise.all([
-          createImageBitmap( imgChar, 3, 0, 15, 21 ), //0, character first frame facing right, first row
-          createImageBitmap( imgChar, 35, 0, 15, 21 ), //1
-          createImageBitmap( imgChar, 66, 0, 15, 21 ), //2
-          createImageBitmap( imgChar, 98, 0, 15, 21 ), //3
-          createImageBitmap( imgChar, 704, 118, 15, 21 ), //4, character first frame facing left, fifth row
-          createImageBitmap( imgChar, 673, 118, 15, 21 ), //5
-          createImageBitmap ( imgChar, 642, 118, 15, 21 ) //6
+          createImageBitmap( imgChar, 3, 0, 17, 21 ), //walk 0, character first frame facing right, first row
+          createImageBitmap( imgChar, 35, 0, 17, 21 ), //walk 1
+          createImageBitmap( imgChar, 66, 0, 17, 21 ), //walk 2
+          createImageBitmap( imgChar, 98, 0, 17, 21 ), //walk 3
+          createImageBitmap( imgChar, 704, 118, 17, 21 ), //walk 4, character first frame facing left, fifth row
+          createImageBitmap( imgChar, 672, 118, 17, 21 ), //walk 5
+          createImageBitmap( imgChar, 639, 118, 17, 21 ), //walk 6
+          createImageBitmap( imgChar, 607, 118, 17, 21 ) //walk 7
         ]).then( function( sprites ) {
           /*
           walkFrames is used as a counter for frame rate; used to decide when to switch to next frame in animation
@@ -123,7 +128,6 @@
             }
             */
             if ( walkFrames > 3 ) walkFrames = 0;
-
             ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
             //console.log(walkFrames);
             /*
@@ -136,9 +140,10 @@
           }
 
           function drawRChar() {
-            if ( walkFrames < 4 ) walkFrames = 4;
+            if ( walkFrames < 4 || walkFrames > 7) walkFrames = 4;
 
-            ctx.drawImage( sprites[ walkFrames ], charH, charV, charSizeH, charSizeV );
+
+            ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
           }
 
           function groundCheck() {
@@ -146,12 +151,12 @@
           }
 
           function draw() {
-            let startTimer = Date.now();
+            // let startTimer = Date.now();
             ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
-            ctxt.drawImage( sprites[0], 0, 0 );
-            ctxt.drawImage( sprites[6], 0, 21 );
-            ctxt.drawImage( sprites[6], 16, 0 );
+            ctxt.drawImage( sprites[4], 0, 0 );
+            ctxt.drawImage( sprites[7], 0, 21 );
+            ctxt.drawImage( sprites[7], 17, 0 );
 
             jump();
 
@@ -168,13 +173,13 @@
 
             if ( leftPressed == true ) {
               lastPressed = 1;
-              charH -= 3;
+              charH -= 2;
               if ( charH < 0 ) {
                 charH = 0;
               }
             } else if ( rightPressed == true ) {
               lastPressed = 0;
-              charH += 3;
+              charH += 2;
               if ( charH > ( canvas.width - charSizeH )) {
                 charH = ( canvas.width - charSizeH ); // characters max left edge is 6 pixels away from canvas edge
               }

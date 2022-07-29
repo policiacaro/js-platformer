@@ -101,6 +101,7 @@
         }
         if ( e.key == " " || e.key == "Spacebar" ) {
           spacePressed = true;
+          startJump = true;
         }
       }
 
@@ -113,7 +114,11 @@
           createImageBitmap( imgChar, 704, 118, 17, 21 ), //walk 4, character first frame facing left, fifth row
           createImageBitmap( imgChar, 672, 118, 17, 21 ), //walk 5
           createImageBitmap( imgChar, 639, 118, 17, 21 ), //walk 6
-          createImageBitmap( imgChar, 607, 118, 17, 21 ) //walk 7
+          createImageBitmap( imgChar, 607, 118, 17, 21 ), //walk 7
+          createImageBitmap( imgChar, 129, 0, 17, 21 ), //jump 1, first frame for character jump, jump preparation
+          createImageBitmap( imgChar, 161, 0, 17, 21 ), //jump 2, moving upwards
+          createImageBitmap( imgChar, 194, 0, 17, 21 ), //jump 3, moving downwards
+          createImageBitmap( imgChar, 226, 0, 17, 21 ) //jump 4, landing the jump
         ]).then( function( sprites ) {
           /*
           walkFrames is used as a counter for frame rate; used to decide when to switch to next frame in animation
@@ -145,7 +150,7 @@
 
             ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
           }
-
+          
           function groundCheck() {
             if ( ground == charV + 20 ) onGround = true;
           }
@@ -154,12 +159,17 @@
             // let startTimer = Date.now();
             ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
-            ctxt.drawImage( sprites[4], 0, 0 );
-            ctxt.drawImage( sprites[7], 0, 21 );
-            ctxt.drawImage( sprites[7], 17, 0 );
+            ctxt.drawImage( sprites[0], 0, 0 );
+            ctxt.drawImage( sprites[11], 0, 21 );
+            ctxt.drawImage( sprites[11], 17, 0 );
 
             jump();
-
+            /*
+            if ( spacePressed == true ) {
+              startJump = true;
+              jump();
+            }
+            */
             if ( leftPressed == true ) {
               drawRChar();
             } else {
@@ -185,10 +195,6 @@
               }
             }
 
-            if ( spacePressed == true ) {
-              startJump = true;
-              jump();
-            }
             //walkFramesCount++;
             //console.log(`walk frames ${walkFrames}; modulo operation walk frames counter ${walkFrameCount}`);
             requestAnimationFrame( draw );

@@ -41,37 +41,18 @@
 
       function jump() {
 
-        if ( jumpCounter < 100 && startJump == true ) {
-          jumpCounter += 5;
+        if ( jumpCounter < 20 && startJump === true ) {
+          jumpCounter += 1;
           charV -= 5;
         }
 
-        if ( jumpCounter == 100 ) startJump = false;
+        if ( jumpCounter === 20 ) startJump = false;
 
-        if ( jumpCounter > 0 && startJump == false ) {
+        if ( jumpCounter > 0 && startJump === false ) {
           charV += 5;
-          jumpCounter -= 5 ;
+          jumpCounter -= 1 ;
           spacePressed = false;
         }
-        /*
-        let jumpHeight = 200;
-
-        if ( spacePressed == true && doubleJump == true ) {
-          if ( charV > jumpHeight ) {
-            charV -= 5;
-            console.log(`this is the charV: ${charV} and this is the jumpHeight ${jumpHeight}`);
-          }
-          if ( charV <= jumpHeight ) {
-            doubleJump = false;
-            console.log(doubleJump);
-          }
-        }
-        if ( charV <= jumpHeight ) {
-          charV += 5;
-          console.log("i am getting fired");
-          console.log(charV)
-        }
-        */
       }
 
       function keyUpHandler( e ) {
@@ -82,12 +63,10 @@
           leftPressed = false;
           walkFrames = 0;
         } else if( e.key == " " || e.key == "Spacebar" ) {
-
         }
       }
 
       function keyDownHandler( e ) {
-        //Date.now();
         if ( e.key == "Right" || e.key == "ArrowRight" ) {
           if ( walkFrameCount > 2 ) walkFrameCount = 0;
           walkFrameCount++;
@@ -100,8 +79,10 @@
           if ( walkFrameCount === 2 ) walkFrames++;
         }
         if ( e.key == " " || e.key == "Spacebar" ) {
-          spacePressed = true;
-          startJump = true;
+          if ( jumpCounter === 0 ) {
+            spacePressed = true;
+            startJump = true;
+          }
         }
       }
 
@@ -125,23 +106,8 @@
           sprites[0] is the right facing frame, also beginning of walk animation, etc walk frame 0 = sprites[0], walk frame 1 = sprites[1]
           */
           function drawChar() {
-            /*
-            if ( walkFrameCount === 10 ) {
-              if ( walkFrames > 3 ) walkFrames = 0;
-              walkFrames++;
-              console.log(`adding to walk frame`);
-            }
-            */
             if ( walkFrames > 3 ) walkFrames = 0;
             ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
-            //console.log(walkFrames);
-            /*
-            if ( walkFrameCount >= 0 ) {
-              ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
-            } else {
-              ctx.drawImage( sprites[0], charH, charV, charSizeH, charSizeV );
-            }
-            */
           }
 
           function drawRChar() {
@@ -150,13 +116,12 @@
 
             ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
           }
-          
+
           function groundCheck() {
             if ( ground == charV + 20 ) onGround = true;
           }
 
           function draw() {
-            // let startTimer = Date.now();
             ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
             ctxt.drawImage( sprites[0], 0, 0 );
@@ -164,12 +129,7 @@
             ctxt.drawImage( sprites[11], 17, 0 );
 
             jump();
-            /*
-            if ( spacePressed == true ) {
-              startJump = true;
-              jump();
-            }
-            */
+
             if ( leftPressed == true ) {
               drawRChar();
             } else {
@@ -195,8 +155,6 @@
               }
             }
 
-            //walkFramesCount++;
-            //console.log(`walk frames ${walkFrames}; modulo operation walk frames counter ${walkFrameCount}`);
             requestAnimationFrame( draw );
           }
           draw();

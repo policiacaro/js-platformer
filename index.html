@@ -32,6 +32,7 @@
       let startJump = false;
       let doubleJump = false;
       let jumpCounter = 0;
+      let jumpFrames = 8;
       let walkFrames = 0;
       let walkFrameCount = 0.0;
       let frameCounter = 0;
@@ -44,14 +45,23 @@
         if ( jumpCounter < 20 && startJump === true ) {
           jumpCounter += 1;
           charV -= 5;
+          if ( jumpCounter === 2 ) jumpFrames = 9;
         }
 
-        if ( jumpCounter === 20 ) startJump = false;
+        if ( jumpCounter === 20 ) {
+          startJump = false;
+          jumpFrames = 10;
+        }
 
         if ( jumpCounter > 0 && startJump === false ) {
           charV += 5;
           jumpCounter -= 1 ;
           spacePressed = false;
+          if ( jumpCounter <= 2 ) {
+            jumpFrames = 11;
+          } else {
+            jumpFrames = 10;
+          }
         }
       }
 
@@ -106,8 +116,14 @@
           sprites[0] is the right facing frame, also beginning of walk animation, etc walk frame 0 = sprites[0], walk frame 1 = sprites[1]
           */
           function drawChar() {
-            if ( walkFrames > 3 ) walkFrames = 0;
-            ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
+            if ( spacePressed === true ) {
+              ctx.drawImage( sprites[jumpFrames], charH, charV, charSizeH, charSizeV );
+            } else {
+              if ( walkFrames > 3 ) walkFrames = 0;
+              ctx.drawImage( sprites[walkFrames], charH, charV, charSizeH, charSizeV );
+
+            }
+
           }
 
           function drawRChar() {
@@ -139,7 +155,7 @@
                 drawChar();
               }
             }
-
+            //jump();
 
             if ( leftPressed == true ) {
               lastPressed = 1;

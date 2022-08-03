@@ -42,19 +42,19 @@
 
       function jump() {
 
-        if ( jumpCounter < 20 && startJump === true ) {
+        if ( jumpCounter < 100 && startJump === true ) {
           jumpCounter += 1;
-          charV -= 5;
+          charV -= 1;
           if ( jumpCounter === 2 ) jumpFrames = 9;
         }
 
-        if ( jumpCounter === 20 ) {
+        if ( jumpCounter === 100 ) {
           startJump = false;
           jumpFrames = 10;
         }
 
         if ( jumpCounter > 0 && startJump === false ) {
-          charV += 5;
+          charV += 1;
           jumpCounter -= 1 ;
           spacePressed = false;
           if ( jumpCounter <= 2 ) {
@@ -63,6 +63,7 @@
             jumpFrames = 10;
           }
         }
+        console.log(jumpFrames);
       }
 
       function keyUpHandler( e ) {
@@ -141,20 +142,11 @@
             ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
             ctxt.drawImage( sprites[0], 0, 0 );
-            ctxt.drawImage( sprites[11], 0, 21 );
-            ctxt.drawImage( sprites[11], 17, 0 );
+            ctxt.drawImage( sprites[9], 0, 21 );
+            ctxt.drawImage( sprites[10], 17, 0 );
 
             jump();
 
-            if ( leftPressed == true ) {
-              drawRChar();
-            } else {
-              if ( lastPressed === 1 ) {
-                drawRChar();
-              } else {
-                drawChar();
-              }
-            }
             //jump();
 
             if ( leftPressed == true ) {
@@ -171,6 +163,15 @@
               }
             }
 
+            if ( leftPressed == true ) {
+              drawRChar();
+            } else {
+              if ( lastPressed === 1 ) {
+                drawRChar();
+              } else {
+                drawChar();
+              }
+            }
             requestAnimationFrame( draw );
           }
           draw();
